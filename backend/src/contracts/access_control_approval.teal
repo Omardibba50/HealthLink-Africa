@@ -1,0 +1,63 @@
+#pragma version 5
+txn ApplicationID
+int 0
+==
+bnz main_l10
+txn OnCompletion
+int OptIn
+==
+bnz main_l9
+txna ApplicationArgs 0
+byte "grant_access"
+==
+bnz main_l8
+txna ApplicationArgs 0
+byte "revoke_access"
+==
+bnz main_l7
+txna ApplicationArgs 0
+byte "check_access"
+==
+bnz main_l6
+err
+main_l6:
+int 0
+byte "access_"
+txna ApplicationArgs 1
+concat
+app_local_get
+return
+main_l7:
+txn NumAppArgs
+int 2
+==
+assert
+int 0
+byte "access_"
+txna ApplicationArgs 1
+concat
+app_local_del
+int 1
+return
+main_l8:
+txn NumAppArgs
+int 2
+==
+assert
+int 0
+byte "access_"
+txna ApplicationArgs 1
+concat
+int 1
+app_local_put
+int 1
+return
+main_l9:
+int 1
+return
+main_l10:
+byte "Creator"
+txn Sender
+app_global_put
+int 1
+return
